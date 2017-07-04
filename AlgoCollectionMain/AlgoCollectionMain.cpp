@@ -26,6 +26,14 @@ void leftRotateString(char* str, int n, int m){
 	revertString(str, 0, n-1);
 }
 
+
+
+/// <summary>
+/// 单词翻转。输入一个英文句子，翻转句子中单词的顺序，但单词内字符的顺序不变，句子中单词以空格符隔开。
+/// 为简单起见，标点符号和普通字母一样处理。例如，输入“I am a student.”，则输出“student. a am I”。
+/// </summary>
+/// <param name="str">The string.</param>
+/// <param name="n">The n.</param>
 void revertWordInString(char* str, int n){
 	//first revert the whole string
 	revertString(str, 0, n - 1);
