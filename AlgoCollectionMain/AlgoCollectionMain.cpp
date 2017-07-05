@@ -2,7 +2,10 @@
 //
 
 #include "stdafx.h"
+#include < iostream > 
+#include <list>
 
+using namespace std;
 
 
 /// <summary>
@@ -168,6 +171,173 @@ bool stringContains(const char* source, int sourceLen, const char* pattern, int 
 
 }
 
+
+/// <summary>
+/// 输入两个整数n和sum，从数列1，2，3.......n 中随意取几个数，使其和等于sum，要求将其中所有的可能组合列出来。
+/// 注意到取n，和不取n个区别即可，考虑是否取第n个数的策略，可以转化为一个只和前n-1个数相关的问题。
+/// </summary>
+/// <param name="sum">The sum.</param>
+/// <param name="n">The n.</param>
+void sumOfKNumber(int sum, int n){
+	static list<int> list1;
+	if (n <= 0 || sum <= 0){
+		return;
+	}
+	if (sum == n) {
+		list1.reverse();
+		for (list<int>::iterator ite = list1.begin();  ite != list1.end(); ite++) {
+			cout << *ite << "+";
+		}
+		cout << n << endl;
+	}
+	list1.push_front(n);
+	sumOfKNumber(sum - n, n - 1);
+	list1.pop_front();
+	sumOfKNumber(sum, n - 1);
+
+}
+
+
+/// <summary>
+/// 输入一个整形数组，数组里有正数也有负数。
+/// 数组中连续的一个或多个整数组成一个子数组，每个子数组都有一个和。 求所有子数组的和的最大值，要求时间复杂度为O(n)。
+/// 对第j+1个元素有两种选择：要么放入前面找到的子数组，要么做为新子数组的第一个元素；
+/// 如果currSum加上当前元素a[j]后不小于a[j]，则令currSum加上a[j]，否则currSum重新赋值，置为下一个元素，即currSum = a[j]。
+/// 同时，当currSum > maxSum，则更新maxSum = currSum，否则保持原值，不更新。
+/// </summary>
+/// <param name="a">a.</param>
+/// <param name="n">The n.</param>
+/// <returns></returns>
+int MaxSubArray(int*a,  int n) {
+	int curSum = 0;
+	int maxSum = a[0];
+	for (int j = 0; j < n; j++) {
+		curSum = (a[j] > curSum + a[j])? a[j]: (curSum + a[j]);
+		maxSum = (maxSum > curSum)? maxSum : curSum;
+	}
+	return maxSum;
+}
+
+
+/// <summary>
+/// Fibonacci数列经典递归解法
+/// 如果扩展到三级台阶：
+///         / 1                                      n = 1
+/// f(n)=     2                                      n = 2
+///           4                                      n = 3       //111, 12, 21, 3
+///         \ f(n-1)+f(n-2)+f(n-3)                   n > 3
+/// </summary>
+/// <param name="n">The n.</param>
+/// <returns></returns>
+long long fibonacci(unsigned int n) {
+	int result[3] = {0, 1, 2};
+	if  (n < 3){
+		return result[n];
+	}
+	return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+
+/// <summary>
+/// 一个台阶总共有n 级，如果一次可以跳1 级，也可以跳2 级
+/// 解法一用的递归的方法有许多重复计算的工作，事实上，我们可以从后往前推，一步步利用之前计算的结果递推。
+/// 初始化时，dp[0]=dp[1]=1，然后递推计算即可：dp[n] = dp[n-1] + dp[n-2]。
+/// </summary>
+/// <param name="n">The n.</param>
+/// <returns></returns>
+int climbStairs(int n) {
+	int dp[3] = {1, 1};
+	if (n < 2) {
+		return 1;
+	}
+	for (int i = 2; i < n; i++)  {
+		dp[2] = dp[0] +  dp[1];
+		dp[0] = dp[1];
+		dp[1] = dp[2];
+	}
+	return dp[2];
+}
+
+/// <summary>
+///  想兑换100元钱，有1,2,5,10四种钱，问总共有多少兑换方法。
+/// ？？？？
+/// </summary>
+void changeCoin(){
+	const int N = 100;
+	int dimes[] = { 1, 2, 5, 10 };
+	int arr[N + 1] = { 1 };
+	for (int i = 0; i < sizeof(dimes) / sizeof(int); ++i)
+	{
+		for (int j = dimes[i]; j <= N; ++j)
+		{
+			arr[j] += arr[j - dimes[i]];
+		}
+	}
+
+}
+
+/// <summary>
+///  determine if number is odd or not
+/// </summary>
+/// <param name="data">The data.</param>
+/// <returns></returns>
+bool isOdd(int data) {
+	return data & 1 == 1;
+}
+
+
+/// <summary>
+/// 输入一个整数数组，调整数组中数字的顺序，使得所有奇数位于数组的前半部分，所有偶数位于数组的后半部分。要求时间复杂度为O(n)。
+/// 借鉴partition的实现一，我们可以考虑维护两个指针，一个指针指向数组的第一个数字，我们称之为头指针，向右移动；一个指针指向最后一个数字，称之为尾指针，向左移动。
+/// </summary>
+/// <param name="pData">The p data.</param>
+/// <param name="length">The length.</param>
+void OddEvenSort(int* pData, unsigned int length)  {
+	if (pData == NULL || length == 0) {
+		return;
+	}
+
+	int* pBegin = pData;
+	int* pEnd = pData + length - 1;
+
+	while (pBegin < pEnd) {
+		if (isOdd(*pBegin)) {
+			pBegin++;
+		}
+		else if (!isOdd(*pEnd)) {
+			pEnd--;
+		}
+		else {
+			swap(*pBegin, *pEnd);
+		}
+	}
+}
+
+
+/// <summary>
+/// 借鉴partition的上述实现，我们也可以维护两个指针i和j
+/// 一个指针指向数组的第一个数的前一个位置，我们称之为后指针i，向右移动；
+/// 一个指针指向数组第一个数，称之为前指针j，也向右移动，且前指针j先向右移动。
+/// 如果前指针j指向的数字是奇数，则令i指针向右移动一位，然后交换i和j指针所各自指向的数字。
+/// </summary>
+/// <param name="data">The data.</param>
+/// <param name="lo">The lo.</param>
+/// <param name="hi">The hi.</param>
+void OddEvenSort2(int* data, int lo, int hi){
+	int i = lo - 1;
+	for(int j = lo; j < hi; j++) {
+		if (isOdd(data[j])) {
+			i += 1;
+			swap(data[i], data[j]);
+		}
+		
+
+	}
+	swap(data[i+1], data[hi]);
+}
+
+
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	char testString[] = "teststring";
@@ -183,6 +353,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	char source[] = "ABCDE";
 	char pattern[] = "CDE";
 	bool contains = stringContains(source, strlen(source), pattern, strlen(pattern));
+
+	sumOfKNumber(5, 10);
+
+	int numClimbs = climbStairs(10);
+
+	changeCoin();
+
+	int oldeven[] = {1,5,4,2,6,3};
+	OddEvenSort(oldeven, 6);
+
+	int oldeven2[] = {1,4,8,3,7,9};
+	OddEvenSort2(oldeven2, 0, 5);
 
 	return 0;
 }
