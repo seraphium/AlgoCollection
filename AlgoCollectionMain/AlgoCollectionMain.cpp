@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include < iostream > 
+#include <iostream>
 #include <list>
 
 using namespace std;
@@ -83,7 +83,7 @@ int strToInt(const char* str){
     unsigned int n = 0;
 
 	//handle space
-	while(_istspace(*str))
+	while(isspace(*str))
 		++str;
 
 	//handle sign
@@ -95,7 +95,7 @@ int strToInt(const char* str){
 		++str;
 	}
 
-	while(_istdigit(*str))
+	while(isdigit(*str))
 	{
 		int c = *str - '0';
 		
@@ -338,7 +338,7 @@ void OddEvenSort2(int* data, int lo, int hi){
 
 
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	char testString[] = "teststring";
 	leftRotateString(testString, strlen(testString), 4);
