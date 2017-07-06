@@ -337,6 +337,80 @@ void OddEvenSort2(int* data, int lo, int hi){
 }
 
 
+/// <summary>
+/// 数组中有一个数字出现的次数超过了数组长度的一半，找出这个数字。
+///我们可以在遍历数组的时候保存两个值：一个candidate，用来保存数组中遍历到的某个数字；一个nTimes，表示当前数字的出现次数，其中，nTimes初始化为1。当我们遍历到数组中下一个数字的时候：
+///如果下一个数字与之前candidate保存的数字相同，则nTimes加1；
+///如果下一个数字与之前candidate保存的数字不同，则nTimes减1；
+///每当出现次数nTimes变为0后，用candidate保存下一个数字，并把nTimes重新设为1。 直到遍历完数组中的所有数字为止。
+/// </summary>
+/// <param name="a">a.</param>
+/// <param name="n">The n.</param>
+/// <returns></returns>
+int FindOverHalfNumber(int* a, int n) {
+	int candidate = a[0];
+	int number = 1;
+	for (int i = 1; i < n; i++) {
+		if (number == 0){
+			candidate = a[i];
+			number = 1;
+		} else {
+			if (candidate == a[i]) {
+				number++;
+			} else {
+				number--;
+			}
+		} 
+	}
+	return candidate;
+
+}
+
+/// <summary>
+/// 给一个浮点数序列，取最大乘积连续子串的值，例如 -2.5，4，0，3，0.5，8，-1，
+/// 则取出的最大乘积连续子串为3，0.5，8。也就是说，上述数组中，3 0.5 8这3个数的乘积30.58=12是最大的，而且是连续的
+/// 暴力解法，两个for循环直接轮询
+/// </summary>
+/// <param name="a">a.</param>
+/// <param name="n">The n.</param>
+/// <returns></returns>
+double maxProductSubstringBrute(double* a, int n)  {
+	double maxResult = a[0];
+	for (int i = 0; i < n; i++) {
+		double x = 1;
+		for (int j = i; j < n; j++){
+			x *= a[j];
+			if (x >  maxResult) {
+				maxResult = x;
+			}
+		}
+	}
+	return maxResult;
+}
+
+/// <summary>
+/// 给一个浮点数序列，取最大乘积连续子串的值，例如 -2.5，4，0，3，0.5，8，-1，
+/// 直接利用动态规划来求解，考虑到可能存在负数的情况
+/// 我们用maxend来表示以a[i]结尾的最大连续子串的乘积值，用minend表示以a[i]结尾的最小的子串的乘积值，那么状态转移方程为
+/// maxend = max(max(maxend * a[i], minend * a[i]), a[i]);
+/// minend = min(min(maxend * a[i], minend * a[i]), a[i]);  
+/// </summary>
+/// <param name="a">a.</param>
+/// <param name="n">The n.</param>
+/// <returns></returns>
+double maxProductDynamic(double* a, int n) {
+	double maxEnd=a[0];
+	double minEnd=a[0];
+	double maxResult = a[0];
+	for (int i = 1; i < n; i++) {
+		double end1 = maxEnd * a[i], end2 = minEnd * a[i];
+		maxEnd = max(max(end1,  end2), a[i]);
+		minEnd = min(min(end1, end2), a[i]);
+		maxResult = max(maxResult, maxEnd);
+	}
+	return maxResult;
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -365,6 +439,13 @@ int main(int argc, char* argv[])
 
 	int oldeven2[] = {1,4,8,3,7,9};
 	OddEvenSort2(oldeven2, 0, 5);
+
+	int overhalfarray[] = {1,2,2,2,2,4,5};
+	int overhalf = FindOverHalfNumber(overhalfarray, 7);
+
+	double maxArray[] = {-2.5, 5, 0, 3, 0.5, 8, -1};
+	double maxMulti = maxProductSubstringBrute(maxArray, 7);
+	double maxDynamic = maxProductDynamic(maxArray, 7);
 
 	return 0;
 }
