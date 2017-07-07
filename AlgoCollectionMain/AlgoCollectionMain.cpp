@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <list>
+#include <stack>
 
 using namespace std;
 
@@ -412,6 +413,119 @@ double maxProductDynamic(double* a, int n) {
 }
 
 
+
+/// <summary>
+/// n 个数字（ 0,1,…,n-1）形成一个圆圈，从数字 0 开始，
+/// 每次从这个圆圈中删除第 m 个数字（第一个为当前数字本身，第二个为当前数字的下一个
+/// 数字）。
+/// 当一个数字删除后，从被删除数字的下一个继续删除第 m 个数字。
+/// 求出在这个圆圈中剩下的最后一个数字
+/// Google solution
+/// 1) if we shift the ids by k, namely, start from k instead of 0, we should add the result by k%n
+/// 2) after the first round, we start from k+1 ( possibly % n) with n-1 elements, that is equal to
+// an (n-1) problem while start from (k+1)th element instead of 0, so the answer is (f(n-1,m)+k+1)%n
+/// 3) k = m-1, so f(n,m)=(f(n-1,m)+m)%n.
+/// finally, f(1, m) = 0;
+/// </summary>
+/// <param name="n">The n.</param>
+/// <param name="m">The m.</param>
+/// <returns></returns>
+int Joseph(int n, int m) {
+	int fn = 0;
+	for (int i = 2; i <= n ; i++){
+		fn = (fn + m) % i;
+	}
+	return fn;
+}
+
+struct TreeNode{
+	int value;
+	TreeNode* left;
+	TreeNode* right;
+} ;
+
+void visit(TreeNode*  node){
+	cout<<node->value<<endl;
+}
+
+/// <summary>
+/// Preorder traverse bi-tree
+/// Non-recursive
+/// </summary>
+/// <param name="node">The root node.</param>
+void preorderNonrecursive(TreeNode * node) {
+	stack<TreeNode *> s;
+	s.push(node);
+	while (!s.empty()) {
+		TreeNode * n = s.top();
+		s.pop();
+		visit(n);
+		if (n->right!=NULL) s.push(n->right);
+		if (n->left!=NULL) s.push(n->left);
+	}
+}
+
+/// <summary>
+/// In-order traverse bi-tree
+/// Non-recursive
+/// </summary>
+/// <param name="node">The root node.</param>
+void inorderNonrecursive(TreeNode * node) {
+	stack<TreeNode *> s;
+	TreeNode * current = node;
+	while (!s.empty() || current != NULL) {
+		if (current != NULL) {
+			s.push(current);
+			current = current->left;
+		} else {
+			current = s.top();
+			s.pop();
+			visit(current);
+			current = current->right;
+		}
+	}
+}
+
+/// <summary>
+/// Post-order traverse bi-tree
+/// Non-recursive
+/// the node first traversed is the node last visited. This recalls the feature of stack.
+/// So we could use a stack to store all the nodes then pop them out altogether
+/// </summary>
+/// <param name="node">The root node.</param>
+void postorderNonrecursive(TreeNode * node) {
+	// visiting occurs only when current has no right child or last visited
+	// is his right child
+	stack<TreeNode *> sTraverse, sVisit;
+	sTraverse.push(node);
+	while (!sTraverse.empty()) {
+		TreeNode * p = sTraverse.top();
+		sTraverse.pop();
+		sVisit.push(p);
+		if (p->left != NULL) sTraverse.push(p->left);
+		if (p->right != NULL) sTraverse.push(p->right);
+	}
+	while (!sVisit.empty()) {
+		visit(sVisit.top());
+		sVisit.pop();
+
+	}
+}
+
+TreeNode* createTree(){
+	TreeNode* rootNode = new TreeNode();
+	rootNode->value = 0;
+	TreeNode* leftNode = new TreeNode();
+	leftNode->value = 1;
+	TreeNode* rightNode = new TreeNode();
+	rightNode->value = 2;
+	rootNode->left = leftNode;
+	rootNode->right = rightNode;
+
+	return rootNode;
+}
+	
+
 int main(int argc, char* argv[])
 {
 	char testString[] = "teststring";
@@ -447,5 +561,9 @@ int main(int argc, char* argv[])
 	double maxMulti = maxProductSubstringBrute(maxArray, 7);
 	double maxDynamic = maxProductDynamic(maxArray, 7);
 
+	TreeNode* pNode = createTree();
+	//preorderNonrecursive(pNode);
+	//inorderNonrecursive(pNode);
+	postorderNonrecursive(pNode);
 	return 0;
 }
