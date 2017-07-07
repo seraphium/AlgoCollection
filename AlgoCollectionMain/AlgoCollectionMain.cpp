@@ -524,7 +524,49 @@ TreeNode* createTree(){
 
 	return rootNode;
 }
-	
+
+//函数功能 ： 打印最长递减子序列  
+//函数参数 ： pArray指向源数组，pB指向辅助数组，k表示最长子序列的末尾元素  
+//返回值 ：   无  
+void Print(int *pArray, int *pB, int k)  
+{  
+    for (int i = k - 1; i >= 0; i--)  
+    {  
+        if(pB[k] == pB[i] + 1 && pArray[i] > pArray[k]) //再现动态规划求解的过程，只不过是逆向  
+        {  
+            Print(pArray, pB, i);  
+            break;  
+        }  
+    }  
+    cout<<pArray[k]<<' ';  
+}  
+
+//函数功能 ： 一个数组的最长递减子序列  
+//函数参数 ： pArray指向源数组，len表示数组长度  
+//返回值 ：   无  
+void FindMDS(int *pArray, int len)  
+{  
+    int i, j, maxi = 0;        //maxi用来记录最长递减序列的末尾元素  
+    int *pB = new int [len];   //辅助空间，pB[i]表示以pAray[i]结尾的最长递减序列长度  
+    for(i = 0 ; i < len; i++)  //初始化  
+        pB[i] = 0;  
+  
+    for(i = 0; i < len; i++)   //计算以pAray[i]结尾的最长递减序列  
+    {  
+        pB[i] = 1;  
+        for(j = 0; j < i; j++)  
+        {  
+            if(pArray[j] > pArray[i] && pB[j] + 1 > pB[i]) //这个判断式是关键  
+            {  
+                pB[i] = pB[j] + 1;  
+                if(pB[i] > pB[maxi]) //更新当前找到的最长递减序列  
+                    maxi = i;  
+            }  
+        }  
+    }  
+    Print(pArray, pB, maxi); //打印目标序列  
+    delete [] pB;  
+}  
 
 int main(int argc, char* argv[])
 {
@@ -565,5 +607,9 @@ int main(int argc, char* argv[])
 	//preorderNonrecursive(pNode);
 	//inorderNonrecursive(pNode);
 	postorderNonrecursive(pNode);
+
+	int decrease[] = {9, 4, 3, 2, 5, 4, 3, 2};
+	FindMDS(decrease, sizeof(decrease)/sizeof(int));
+
 	return 0;
 }
