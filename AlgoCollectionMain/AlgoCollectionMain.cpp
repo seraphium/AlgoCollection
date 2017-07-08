@@ -512,6 +512,31 @@ void postorderNonrecursive(TreeNode * node) {
 	}
 }
 
+
+///Get least common parent of two tree node
+TreeNode* getLCA(TreeNode* root, TreeNode* x, TreeNode* y) {
+	if (root == NULL){
+		return root;
+	}
+	if (root == x || root == y){
+		return root;
+	}
+	TreeNode* left = getLCA(root->left, x, y);
+	TreeNode* right = getLCA(root->right, x, y);
+	if (left == NULL){
+		return right;
+	}
+	if (right == NULL) {
+		return left;
+	}
+	return root;
+
+
+
+}
+
+
+
 TreeNode* createTree(){
 	TreeNode* rootNode = new TreeNode();
 	rootNode->value = 0;
@@ -568,7 +593,159 @@ void FindMDS(int *pArray, int len)
     }  
     Print(pArray, pB, maxi); //打印目标序列  
     delete [] pB;  
-}  
+}
+
+
+///函数功能 ： 递归返回数组p从begin到end之间的全排列
+void permHelper(int* p, int begin, int end){
+	if (begin == end)
+	{
+		//output result
+		for (int i = 0; i < end; i++){
+			cout<<p[i]<<" ";
+		}
+		cout<<endl;
+	}
+	for (int j = begin; j < end; j++){
+		swap(p[begin],p[j]);
+		permHelper(p, begin + 1, end);
+		swap(p[begin], p[j]);
+	}
+
+
+}
+
+void fullPermutation(int* p, int n){
+	if (p == NULL || n <= 0) {
+		return;
+	}
+	permHelper(p, 0, n);
+}
+
+//definition of link node
+struct LinkNode {
+	int value;
+	LinkNode* next;
+};
+
+//code to create sample linked list
+LinkNode* createLink()
+{
+	LinkNode* pHead = new LinkNode();
+	pHead->value = 0;
+	LinkNode* p2 = new LinkNode();
+	p2->value = 1;
+	LinkNode* p3 = new LinkNode();
+	p3->value = 2;
+	pHead->next = p2;
+	p2->next = p3;
+
+	return pHead;
+}
+
+
+///reverse linked list using recursive method
+LinkNode* reverseLink(LinkNode* p){
+
+	if (p == NULL || p->next == NULL){
+		return p;
+	}
+	LinkNode* pMid = p->next;
+	LinkNode* pPrevious = reverseLink(pMid);
+	pMid->next = p;
+	p -> next = NULL;
+	return pPrevious;
+}
+
+///reverse linked list using non-recursive method
+LinkNode* reverseLinkNonRecursive(LinkNode* head){
+	if (head == NULL) {
+		return head;
+	}
+	LinkNode* previous = NULL;
+	LinkNode* p = head;
+	LinkNode* next = NULL;
+	while (p != NULL){
+		next = p->next;
+		p->next = previous;
+		previous = p;
+		p = next;
+	}
+
+	return previous;
+}
+
+///delete node in linked list
+///Copy the data from tobedeleted’s next to tobedeleted. then delete tobedeleted.
+///The special case is tobedelete is the tail, then we must iterate to find its predecessor.
+///The amortized time complexity is O(1).
+
+void deleteLinkNode(LinkNode* pHead, LinkNode* pDelete){
+	if (pHead == NULL){
+		return;
+	}
+	if (pDelete -> next == NULL){
+		//special case, need to iterate to previous node
+		LinkNode* p = pHead;
+		while (p->next != NULL && p->next != pDelete)
+			p = p->next;
+		p ->next = NULL;
+		delete pDelete;
+		return;
+	}
+	LinkNode* pRealDelete = pDelete->next;
+	pDelete->value = pRealDelete->value;
+	pDelete->next = pRealDelete->next;
+	delete pRealDelete;
+
+}
+
+
+///recursively put item into stack bottom
+void putToBottom(std::stack<int>& stack, int object) {
+	if (stack.empty()){
+		stack.push(object);
+		return;
+	}
+	int obj = stack.top();
+	stack.pop();
+	putToBottom(stack, object);
+	stack.push(obj);
+
+}
+
+///recursively reverse stack items
+void revertStack(std::stack<int>& stack){
+	if (stack.size() <= 1){
+		return;
+	}
+	int obj = stack.top();
+	stack.pop();
+	revertStack(stack);
+	putToBottom(stack, obj);
+}
+
+
+///display stack items from top
+///will destroy stack
+void PrintStackFromTop(std::stack<int> stack){
+
+	while (!stack.empty()) {
+		int top = stack.top();
+		cout<<top<<endl;
+		stack.pop();
+	}
+}
+
+
+
+///get exponent calculation using recursion
+double power(double base, int exp) {
+	if (exp == 1) return base;
+	double half = power(base, exp >> 1);
+	return (((exp & 1) == 1) ? base : 1.0) * half * half;
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -612,6 +789,25 @@ int main(int argc, char* argv[])
 
 	int decrease[] = {9, 4, 3, 2, 5, 4, 3, 2};
 	FindMDS(decrease, sizeof(decrease)/sizeof(int));
+
+	int perm[] = {1,2,3};
+	fullPermutation(perm, 3);
+
+	LinkNode* pHead = createLink();
+	//LinkNode* pReversedHead = reverseLink(pHead);
+	//LinkNode* pReversedHead = reverseLinkNonRecursive(pHead);
+	LinkNode* pDelete = pHead->next->next;
+	deleteLinkNode(pHead, pDelete);
+
+	stack<int> stack;
+	stack.push(1);
+	stack.push(2);
+	stack.push(3);
+
+	revertStack(stack);
+	PrintStackFromTop(stack);
+
+	int res = power(100, 2);
 
 	return 0;
 }
