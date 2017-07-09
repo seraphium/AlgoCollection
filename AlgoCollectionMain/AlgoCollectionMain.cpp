@@ -1,13 +1,77 @@
 // AlgoCollectionMain.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
 #include <iostream>
 #include <list>
 #include <stack>
 
 using namespace std;
 
+
+// utility definitions
+
+//definition of link node
+struct LinkNode {
+	int value;
+	LinkNode* next;
+};
+
+struct TreeNode{
+	int value;
+	TreeNode* left;
+	TreeNode* right;
+} ;
+
+void visit(TreeNode*  node){
+	cout<<node->value<<endl;
+}
+
+//code to create sample linked list
+LinkNode* createLink()
+{
+	LinkNode* pHead = new LinkNode();
+	pHead->value = 0;
+	LinkNode* p2 = new LinkNode();
+	p2->value = 1;
+	LinkNode* p3 = new LinkNode();
+	p3->value = 2;
+	pHead->next = p2;
+	p2->next = p3;
+
+	return pHead;
+}
+
+
+TreeNode* createTree(){
+	TreeNode* rootNode = new TreeNode();
+	rootNode->value = 0;
+	TreeNode* leftNode = new TreeNode();
+	leftNode->value = 1;
+	TreeNode* rightNode = new TreeNode();
+	rightNode->value = 2;
+	rootNode->left = leftNode;
+	rootNode->right = rightNode;
+
+	return rootNode;
+}
+
+
+void printArray(int*a, int n){
+	for (int i =0 ; i < n; i++){
+		cout<<a[i]<<" ";
+	}
+
+}
+
+
+/// <summary>
+///  determine if number is odd or not
+/// </summary>
+/// <param name="data">The data.</param>
+/// <returns></returns>
+bool isOdd(int data) {
+	return (data & 1) == 1;
+}
 
 /// <summary>
 /// Reverts the string.
@@ -277,14 +341,6 @@ void changeCoin(){
 
 }
 
-/// <summary>
-///  determine if number is odd or not
-/// </summary>
-/// <param name="data">The data.</param>
-/// <returns></returns>
-bool isOdd(int data) {
-	return data & 1 == 1;
-}
 
 
 /// <summary>
@@ -438,15 +494,7 @@ int Joseph(int n, int m) {
 	return fn;
 }
 
-struct TreeNode{
-	int value;
-	TreeNode* left;
-	TreeNode* right;
-} ;
 
-void visit(TreeNode*  node){
-	cout<<node->value<<endl;
-}
 
 /// <summary>
 /// Preorder traverse bi-tree
@@ -536,20 +584,6 @@ TreeNode* getLCA(TreeNode* root, TreeNode* x, TreeNode* y) {
 }
 
 
-
-TreeNode* createTree(){
-	TreeNode* rootNode = new TreeNode();
-	rootNode->value = 0;
-	TreeNode* leftNode = new TreeNode();
-	leftNode->value = 1;
-	TreeNode* rightNode = new TreeNode();
-	rightNode->value = 2;
-	rootNode->left = leftNode;
-	rootNode->right = rightNode;
-
-	return rootNode;
-}
-
 //函数功能 ： 打印最长递减子序列  
 //函数参数 ： pArray指向源数组，pB指向辅助数组，k表示最长子序列的末尾元素  
 //返回值 ：   无  
@@ -622,26 +656,6 @@ void fullPermutation(int* p, int n){
 	permHelper(p, 0, n);
 }
 
-//definition of link node
-struct LinkNode {
-	int value;
-	LinkNode* next;
-};
-
-//code to create sample linked list
-LinkNode* createLink()
-{
-	LinkNode* pHead = new LinkNode();
-	pHead->value = 0;
-	LinkNode* p2 = new LinkNode();
-	p2->value = 1;
-	LinkNode* p3 = new LinkNode();
-	p3->value = 2;
-	pHead->next = p2;
-	p2->next = p3;
-
-	return pHead;
-}
 
 
 ///reverse linked list using recursive method
@@ -746,6 +760,142 @@ double power(double base, int exp) {
 	return (((exp & 1) == 1) ? base : 1.0) * half * half;
 }
 
+///helper function to judge ascending using recursion
+bool isAscending(int* a, int start, int length) {
+    return start == length - 1 || (isAscending(a, start+1, length) && a[start] <= a[start+1]);
+}
+
+
+bool isAscending(int* a, int n) {
+    return isAscending(a, 0, n);
+ }
+
+
+
+///traditional insert sort
+void insertSort(int*a, int n) {
+    int i, j, k;
+    for (i = 1; i < n; i++) {
+		//find the first location j that smaller than moving item
+        for (j = i - 1; j >= 0; j--){
+			if (a[j] < a[i])
+				break;
+		}
+		//move the items begin from j backward and insert item
+		if (j != i - 1){
+			int temp = a[i];
+			for (k = i - 1; k > j; k--){
+				a[k + 1] = a[k];
+			}
+			a[k+1] = temp;
+		}
+    }
+}
+
+///first round optimized insert sort
+void insertSort2(int* a, int n){
+	int i , j;
+	for (i = 1; i < n; i++){
+		if (a[i] < a[i - 1]) {
+			int temp = a[i];
+			for (j = i - 1; j >= 0 && a[j] > temp; j --) {
+				a[j+1] = a[j];
+			}
+			a[j+1] = temp;
+
+		}
+	}
+}
+
+///second round optimized insert sort with using swap instead of moving items
+void insertSort3(int* a, int n) {
+	int i, j;
+	for (int i = 1; i < n; i++){
+		for (int j = i - 1; j >= 0 && a[j] > a[j+1]; j--) {
+			swap(a[j], a[j+1]);
+		}
+	}
+
+
+}
+
+///shell sort based on insertSort3
+void shellSort(int*a, int n){
+	int i, j, gap;
+	for (gap = n / 2; gap > 0; gap /= 2){
+		for (i = gap; i < n; i++){
+			for (j = i - gap; j >= 0 && a[j] > a[j+gap]; j -= gap) {
+				swap(a[j], a[j + gap]);
+			}
+		}
+	}
+}
+///traditional bubble sort
+void bubbleSort(int*a, int n) {
+	for (int i = 0 ;i < n; i++){
+		for (int j = 1; j< n - i; j++){
+			if (a[j - 1] > a[j]) {
+				swap(a[j - 1], a[j]);
+			}
+		}
+	}
+}
+
+///second optimized bubble sort
+///如果有100个数的数组，仅前面10个无序，
+/// 后面90个都已排好序且都大于前面10个数字，
+/// 那么在第一趟遍历后，最后发生交换的位置必定小于10，
+/// 且这个位置之后的数据必定已经有序了，记录下这位置，
+/// 第二次只要从数组头部遍历到这个位置就可以了。
+void bubbleSort2(int*a, int n){
+	int j, k;
+	int flag;
+	flag = n;
+	while (flag > 0) {
+		k = flag;
+		flag = 0;
+		for (j = 1; j < k; j++){
+			if (a[j-1] > a[j]) {
+				swap(a[j-1], a[j]);
+				flag = j;
+			}
+		}
+	}
+}
+
+
+///quick sort partition using last item as mid-item
+int partition(int*a, int lo, int hi){
+
+	int i = lo - 1;
+	for (int j = lo; j < hi; j++) {
+		if (a[j] < a[hi]) {
+			i++;
+			swap(a[j], a[i]);
+		}
+	}
+	swap(a[i+1], a[hi]);
+	return i+1;
+
+}
+
+///traditional quick sort
+void quickSortHelper(int* a, int l, int r){
+	if (l > r){
+		return;
+	}
+	int mid = partition(a, l, r);
+	quickSortHelper(a, 0, mid - 1);
+	quickSortHelper(a, mid + 1, r);
+}
+
+
+void quickSort(int*a, int n) {
+	quickSortHelper(a, 0, n - 1);
+
+
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -807,7 +957,12 @@ int main(int argc, char* argv[])
 	revertStack(stack);
 	PrintStackFromTop(stack);
 
-	int res = power(100, 2);
+    int asc[] = {1, 2, 2, 3, 4};
+    bool ascending = isAscending(asc, 4);
 
+	int sort[] = {3,1,2,5,7,4, 8, 9};
+	//insertSort3(sort, 6);
+	quickSort(sort, 8);
+	printArray(sort, 8);
 	return 0;
 }
